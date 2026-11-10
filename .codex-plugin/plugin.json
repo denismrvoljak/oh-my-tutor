@@ -1,0 +1,31 @@
+{
+  "name": "tutor",
+  "description": "Stateful coding tutor: hint-first, track-aware teaching. Shares its learner profile and tracks with oh-my-tutor for Pi and Claude Code.",
+  "author": {
+    "name": "Denis Mrvoljak"
+  },
+  "homepage": "https://github.com/denismrvoljak/oh-my-tutor",
+  "repository": "https://github.com/denismrvoljak/oh-my-tutor",
+  "license": "MIT",
+  "keywords": [
+    "tutor",
+    "learning"
+  ],
+  "skills": "./skills",
+  "hooks": "./claude/hooks.json",
+  "interface": {
+    "displayName": "oh-my-tutor",
+    "shortDescription": "Hint-first coding tutor",
+    "longDescription": "Turns Codex into a coding tutor. It adapts to your learner profile, keeps learning tracks in your project, and gives hints before full solutions.",
+    "developerName": "Denis Mrvoljak",
+    "category": "Education",
+    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "websiteURL": "https://github.com/denismrvoljak/oh-my-tutor",
+    "defaultPrompt": [
+      "@tutor on",
+      "@tutor status",
+      "$hint I am stuck on this function"
+    ],
+    "brandColor": "#8839EF"
+  }
+}

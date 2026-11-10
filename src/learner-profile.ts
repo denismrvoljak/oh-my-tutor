@@ -16,12 +16,22 @@ export interface LearnerProfileMarkdownInput {
   primaryTopics: string[];
   strengths?: string[];
   stickingPoints?: string[];
+  learningTechniques?: string[];
   notes?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
 
 export const LEARNER_PROFILE_FILENAME = "learner-profile.md";
+
+// The menu the tutor offers during onboarding. The learner can pick several, none, or describe their own.
+export const LEARNING_TECHNIQUES = [
+  "Why-first: ask why a thing exists and what breaks without it, before how it works",
+  "Teach-back: ask the learner to explain the concept in their own words",
+  "Socratic: lead with questions and hold back statements",
+  "Recall review: start each session with a short question on earlier material",
+  "Worked example, then fade: show one full example, then remove steps for the learner to fill",
+];
 
 export const LEARNER_PROFILE_TEMPLATE = `# Learner Profile
 
@@ -48,6 +58,9 @@ export const LEARNER_PROFILE_TEMPLATE = `# Learner Profile
 
 ## Sticking points
 - None recorded yet
+
+## Learning techniques
+- <chosen technique, or: None chosen>
 
 ## Notes
 - Preferred help style: <free-form description>
@@ -117,6 +130,8 @@ export function renderLearnerProfileMarkdown(input: LearnerProfileMarkdownInput)
     "",
     ...renderListSection("Sticking points", input.stickingPoints ?? [], "None recorded yet"),
     "",
+    ...renderListSection("Learning techniques", input.learningTechniques ?? [], "None chosen"),
+    "",
     ...renderListSection("Notes", input.notes ?? [], "No notes recorded yet"),
     "",
   ];
@@ -147,6 +162,7 @@ export function buildLearnerProfilePrompt(markdown: string): string {
   return [
     "Learner profile markdown is the source of truth for tutoring decisions.",
     "Use it to adapt pacing, explanation depth, hint style, and project framing.",
+    "If it lists learning techniques, use them when you choose questions and exercises.",
     "If the user explicitly updates preferences, update the markdown file before relying on the new state.",
     markdown.trim(),
   ].join("\n\n");
@@ -162,6 +178,9 @@ export function buildConversationalOnboardingPrompt(profilePath: string): string
     "- current level",
     "- preferred help style",
     "- whether project-based learning is desired",
+    "- which learning techniques they want",
+    "Offer these learning techniques in one short list. The learner can pick several, pick none, or describe their own:",
+    ...LEARNING_TECHNIQUES.map((technique) => `- ${technique}`),
     "Rules:",
     "- Ask only the minimum follow-up questions needed.",
     "- If the current user message already contains enough detail, create the file immediately instead of asking another question.",
@@ -175,7 +194,7 @@ export function buildOnboardingKickoffMessage(profilePath: string): string {
   return [
     "Tutor mode is enabled, but no learner profile exists yet.",
     "Start conversational onboarding now.",
-    "Ask me to describe what I want to learn, my desired stack/topic, my current level, my preferred help style, and whether I want project-based learning.",
+    "Ask me to describe what I want to learn, my desired stack/topic, my current level, my preferred help style, which learning techniques I want, and whether I want project-based learning.",
     `When you have enough information, create ${profilePath} as a markdown learner profile.`,
   ].join(" ");
 }

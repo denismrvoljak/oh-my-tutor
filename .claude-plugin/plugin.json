@@ -12,8 +12,7 @@
     "learning"
   ],
   "commands": [
-    "./prompts",
-    "./claude/commands"
+    "./prompts"
   ],
   "skills": "./skills",
   "hooks": "./claude/hooks.json"
