@@ -4,8 +4,10 @@ import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import {
+  buildConversationalOnboardingPrompt,
   buildLearnerProfilePrompt,
   getLearnerProfileTemplate,
+  LEARNING_TECHNIQUES,
   loadLearnerProfileMarkdown,
   renderLearnerProfileMarkdown,
   resolveLearnerProfilePath,
@@ -102,6 +104,26 @@ test("learner profile template gives the agent a markdown scaffold for first-run
   assert.match(template, /## Snapshot/);
   assert.match(template, /## Learning goals/);
   assert.match(template, /## Notes/);
+  assert.match(template, /## Learning techniques/);
+});
+
+test("onboarding offers every learning technique and the profile renders the chosen ones", () => {
+  const prompt = buildConversationalOnboardingPrompt("/tmp/learner-profile.md");
+  for (const technique of LEARNING_TECHNIQUES) assert.ok(prompt.includes(technique));
+
+  const base = {
+    currentLevel: "beginner",
+    preferredStackOrDomain: "Rails",
+    projectBasedLearning: true,
+    attemptFirst: true,
+    preferHintsBeforeSolutions: true,
+    conciseExplanations: true,
+    reflectionCheckpoints: true,
+    learningGoals: [],
+    primaryTopics: [],
+  };
+  assert.match(renderLearnerProfileMarkdown({ ...base, learningTechniques: ["Why-first"] }), /## Learning techniques\n- Why-first/);
+  assert.match(renderLearnerProfileMarkdown(base), /## Learning techniques\n- None chosen/);
 });
 
 test("PI_TUTOR_DIR overrides the host agent dir; an explicit agentDir still wins", () => {

@@ -28,7 +28,7 @@ If no track is matched:
 
 1. Start from the learner's current focus or last blocker in `progress.md`.
 2. Teach one small chunk at a time.
-3. After each chunk, ask a short check-for-understanding or active-recall question.
+3. After each chunk, ask a short check-for-understanding or active-recall question. If `learner-profile.md` lists learning techniques, shape the question with them.
 4. Give one focused practice prompt, mini-exercise, or debugging task tied to the roadmap.
 5. Only expand into longer explanations when the learner asks or the misunderstanding persists.
 6. Keep bringing the conversation back to the next roadmap milestone or exercise.
