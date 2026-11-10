@@ -90,16 +90,15 @@ For local development, run `claude --plugin-dir /absolute/path/to/oh-my-tutor`.
 
 In Claude Code, the commands carry the plugin prefix: `/tutor:tutor on`, `/tutor:hint`, `/tutor:tutor-implementation`, and so on. A `UserPromptSubmit` hook (`claude/user-prompt-submit.mjs`) replaces the Pi extension. Tutor mode applies per session. The plugin uses the same learner profile and project tracks as Pi. The hook needs Node 22.18 or later.
 
-While tutor mode is on, Pi shows `○ 🦉 tutor: ON` in its footer. The dot lights up while the agent is working. Claude Code can show `🦉 tutor: ON` in its status line, but a plugin cannot set the status line for you. To turn it on:
+While tutor mode is on, Pi shows `○ 🦉 tutor: ON` in its footer. The dot lights up while the agent is working.
 
-1. Run `/tutor:tutor on` once. This writes the launcher `~/.oh-my-tutor/statusline.mjs`.
-2. Add this to `~/.claude/settings.json`:
+Claude Code shows `🦉 tutor: ON` as a notice when you change tutor mode. It can also show the badge in its status line, but a plugin cannot set the status line for you. The first time you run `/tutor:tutor on`, Claude offers to add this to `~/.claude/settings.json`:
 
-   ```json
-   "statusLine": { "type": "command", "command": "node ~/.oh-my-tutor/statusline.mjs" }
-   ```
+```json
+"statusLine": { "type": "command", "command": "node ~/.oh-my-tutor/statusline.mjs" }
+```
 
-The status line prints nothing while tutor mode is off. If you already have a status line, this setting replaces it. To keep yours, call the launcher from your own status line script and print both outputs.
+The status line prints nothing while tutor mode is off. If you already have a status line, Claude offers to add the badge to your script and does not replace it. Your script must pass its stdin to `node ~/.oh-my-tutor/statusline.mjs` and print the output. Claude makes the offer once. To get it again, delete `~/.oh-my-tutor/statusline-offered`.
 
 ### Codex (experimental)
 
@@ -110,9 +109,18 @@ codex plugin marketplace add denismrvoljak/oh-my-tutor
 codex plugin add tutor@oh-my-tutor
 ```
 
-Then open `codex`, run `/hooks` and approve the oh-my-tutor hook. Codex skips plugin hooks until you approve them, and asks again after every plugin update.
+Codex has no plugin slash commands, so type `@tutor on`, `@tutor off` or `@tutor status`.
 
-Codex has no plugin slash commands, so type `@tutor on`, `@tutor off` or `@tutor status`. Use `$hint`, `$reflect`, `$next_step` and `$start_tutoring` for the workflows. Codex has no tutor status item.
+Codex skips plugin hooks until you approve them. Run `/hooks` in `codex` and approve the oh-my-tutor hook. Codex asks again after every plugin update, and a plugin cannot change that. The two modes differ:
+
+| | Hook approved | Hook not approved |
+|---|---|---|
+| `@tutor on` | Works, per session | Works through the `tutor` skill, for the current conversation only |
+| Learner profile and track context | Added on every turn | Read once, when you turn tutor mode on |
+| `$hint`, `$reflect`, `$next_step`, `$start_tutoring` | Work | Not available |
+| Tutor badge | `🦉 tutor: ON` leads the hook context that Codex shows for each turn | None |
+
+Codex has no status line item that a plugin can set, so the footer cannot show tutor mode.
 
 ## What it includes
 
