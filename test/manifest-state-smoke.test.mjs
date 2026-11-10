@@ -136,3 +136,11 @@ test("README workflow examples and pack smoke stay in sync with packaged resourc
   assert.match(script, /pi", \["install", "-l", unpackedPackagePath\]/);
   assert.match(script, /pi", \["list"/);
 });
+
+test("the Codex manifest stays in sync with the Claude Code manifest", () => {
+  const claude = readJson(".claude-plugin/plugin.json");
+  const codex = readJson(".codex-plugin/plugin.json");
+
+  for (const key of ["name", "skills", "hooks"]) assert.deepEqual(codex[key], claude[key], key);
+  assert.equal(existsSync(resolve(packageRoot, codex.hooks)), true);
+});
